@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
 const armySchema = mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String },
   units: {
-    type: Number, minlength: 80, maxlength: 100, required: true,
-  },
+    type: Number, minlength: 80, maxlength: 100 },
   strategy: {
-    type: String, enum: ['weakest', 'strongest', 'random'], required: true,
-  },
+    type: String, enum: ['weakest', 'strongest', 'random'] },
 });
-module.exports = mongoose.model('Post', armySchema);
+module.exports = mongoose.model('Army', armySchema);
