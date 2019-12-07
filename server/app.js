@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-// const { worker } = require('worker_threads');
+const { Worker } = require('worker_threads');
 const Battle = require('../domain/battle');
 const Army = require('../domain/army');
 
@@ -14,6 +14,10 @@ mongoose.connect('mongodb+srv://atlas_admin:xM3wnmMzdmSkWuCZ@cluster0-vanrx.mong
     console.log('error connecting to db');
   });
 app.use(bodyParser.json());
+
+const handler = (message) => {
+  console.log(`called ${message}`);
+};
 
 app.get('/create-battle', (req, res) => {
   const battle = new Battle();
@@ -54,8 +58,11 @@ app.post('/add-army', (req, res) => {
 app.post('/start-game', (req, res) => {
   const { battleId } = req.body;
   Army.find({ battleId })
-    .then((data) => {
-      data.forEach((d) => {
+    .then((datas) => {
+      datas.forEach((data) => {
+        let d = JSON.stringify(data._doc);
+        let w = new Worker('./army.js', { workerData: d })
+          .on('message', handler);
       });
       return res.status(200).send(`found ${data}`);
     })
@@ -69,5 +76,6 @@ app.get('/list-games', (req, res) => {
     res.status(200).json(battles);
   });
 });
+
 
 module.exports = app;
