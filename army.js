@@ -13,5 +13,7 @@ const {
   battleId
 } = JSON.parse(workerData);
 
-
+parentPort.on('message', (mess) => {
+  console.log(mess);
+});
 parentPort.postMessage(`My threadId is ${threadId}`);
